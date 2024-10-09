@@ -49,6 +49,7 @@
 #define SPI1_BASEADDR				(APB2PERIPH_BASEADDR + 0x3000)
 #define USART1_BASEADDR				(APB2PERIPH_BASEADDR + 0x3800)
 #define EXTI_BASEADDR				(APB2PERIPH_BASEADDR + 0x0400)
+#define AFIO_BASEADDR				 APB2PERIPH_BASEADDR
 /*
  * Base Addresses of all peripherals which are hanging on APB1 Bus
  */
@@ -62,7 +63,7 @@
 #define UART5_BASEADDR				(APB1PERIPH_BASEADDR + 0x5000)
 
 /*
- * Base Addresses of all peripherals which are hanging on APB1 Bus
+ * Base Addresses of all peripherals which are hanging on AHB Bus
  */
 #define RCC_BASEADDR				0x40021000U
 /*
@@ -83,14 +84,15 @@ typedef struct{
 */
 
 typedef struct{
-	__vo uint32_t EVCR;
-	/*MAPR[0] for low-, medium- high- and XL-density devices,					Address Offset =
+	__vo uint32_t EVCR;														/*  Address Offset = 0x00 */
+	/*MAPR[0] for low-, medium- high- and XL-density devices,					Address Offset = 0x04
 	  MAPR[1] for connectivity line devices, 									Address Offset = */
 	__vo uint32_t MAPR[2];
-	__vo uint32_t EXTICR1; /*External interrupt configuration register 1,		Address Offset = */
-	__vo uint32_t EXTICR2; /*External interrupt configuration register 2,		Address Offset = */
-	__vo uint32_t EXTICR3; /*External interrupt configuration register 3,		Address Offset = */
-	__vo uint32_t EXTICR4; /*External interrupt configuration register 4,		Address Offset = */
+//	__vo uint32_t EXTICR1; /*External interrupt configuration register 1,		Address Offset = 0x08 */
+//	__vo uint32_t EXTICR2; /*External interrupt configuration register 2,		Address Offset = 0x0C */
+//	__vo uint32_t EXTICR3; /*External interrupt configuration register 3,		Address Offset = 0x10 */
+//	__vo uint32_t EXTICR4; /*External interrupt configuration register 4,		Address Offset = 0x14 */
+	__vo uint32_t EXTICR[4];
 	__vo uint32_t MAPR2;   /*AF remap and debug I/O configuration register2,	Address Offset = */
 }AFIO_RegDef_t;
 
@@ -111,18 +113,42 @@ typedef struct{
 	__vo uint32_t AHBSTR;		/*AHB peripheral clock reset register,			Address Offset = 0x28*/
 	__vo uint32_t CFGR2;		/*Clock configuration register2,				Address Offset = 0x2C*/
 }RCC_RegDef_t;
+
+/*
+ * peripheral register definition for RCC
+ */
+typedef struct{
+	__vo uint32_t IMR;			/*Interrupt mask register, 					Address Offset = 0x00 */
+	__vo uint32_t EMR;			/*Event mask register , 					Address Offset = 0x04 */
+	__vo uint32_t RTSR;			/*Rising trigger selection register,		Address Offset = 0x08 */
+	__vo uint32_t FTSR;			/*Falling trigger selection register,		Address Offset = 0x0C */
+	__vo uint32_t SWIER;		/*Software interrupt event register,		Address Offset = 0x10 */
+	__vo uint32_t PR;			/*Pending register, 	 					Address Offset = 0x14 */
+
+}EXTI_RegDef_t;
+
 /*
 *  peripheral definitions ( Peripheral base addresses typecasted to xxx_RegDef_t)
 */
-#define GPIOA		(GPIO_RegDef_t*(GPIOA_BASEADDR))
-#define GPIOB		(GPIO_RegDef_t*(GPIOB_BASEADDR))
-#define GPIOC		(GPIO_RegDef_t*(GPIOC_BASEADDR))
-#define GPIOD		(GPIO_RegDef_t*(GPIOD_BASEADDR))
-#define GPIOE		(GPIO_RegDef_t*(GPIOE_BASEADDR))
-#define GPIOF		(GPIO_RegDef_t*(GPIOF_BASEADDR))
-#define GPIOG		(GPIO_RegDef_t*(GPIOG_BASEADDR))
+#define GPIOA		((GPIO_RegDef_t*)GPIOA_BASEADDR)
+#define GPIOB		((GPIO_RegDef_t*)GPIOB_BASEADDR)
+#define GPIOC		((GPIO_RegDef_t*)GPIOC_BASEADDR)
+#define GPIOD		((GPIO_RegDef_t*)GPIOD_BASEADDR)
+#define GPIOE		((GPIO_RegDef_t*)GPIOE_BASEADDR)
+#define GPIOF		((GPIO_RegDef_t*)GPIOF_BASEADDR)
+#define GPIOG		((GPIO_RegDef_t*)GPIOG_BASEADDR)
 
-#define RCC			(RCC_RegDef_t*(RCC_BASEADDR))
+#define RCC			((RCC_RegDef_t*)RCC_BASEADDR)
+#define EXTI		((EXTI_RegDef_t*)EXTI_BASEADDR)
+#define AFIO		((AFIO_RegDef_t*)AFIO_BASEADDR)
+/*
+ * Reset Macros for GPIOx peripherals
+ */
+#define GPIOA_REG_RESET()			do{(RCC->APB2RSTR |= (1<<2));	(RCC->APB2RSTR &= ~(1<<2));}while(0)
+#define GPIOB_REG_RESET()			do{(RCC->APB2RSTR |= (1<<3));	(RCC->APB2RSTR &= ~(1<<3));}while(0)
+#define GPIOC_REG_RESET()			do{(RCC->APB2RSTR |= (1<<4));	(RCC->APB2RSTR &= ~(1<<4));}while(0)
+#define GPIOD_REG_RESET()			do{(RCC->APB2RSTR |= (1<<5));	(RCC->APB2RSTR &= ~(1<<5));}while(0)
+#define GPIOE_REG_RESET()			do{(RCC->APB2RSTR |= (1<<6));	(RCC->APB2RSTR &= ~(1<<6));}while(0)
 
 /*
  * Clock Enable Macros for GPIOx peripherals
@@ -134,7 +160,10 @@ typedef struct{
 #define GPIOE_PCLK_EN()			(RCC->APB2ENR |= (1 << 6)) 	/* IO port E clock enable*/
 #define GPIOF_PCLK_EN()			(RCC->APB2ENR |= (1 << 7))	/* IO port F clock enable*/
 #define GPIOG_PCLK_EN()			(RCC->APB2ENR |= (1 << 8)) 	/* IO port G clock enable*/
-
+/*
+ * Clock Enable Macros for AFIO peripherals
+ */
+#define AFIO_PCLK_EN()			(RCC->APB2ENR |= (1 << 0))
 /*
  * Clock Enable Macros for I2Cx peripherals
  */
@@ -158,14 +187,14 @@ typedef struct{
 #define UART5_PCLK_EN()			(RCC->APB1ENR |= (1 << 20))  /*UART5 clock enable*/
 
 /*
- * Clock Enable Macros for GPIOx peripherals
+ * Clock Disable Macros for GPIOx peripherals
  */
 #define GPIOA_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 2)) 	/* IO port A clock disable*/
 #define GPIOB_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 3)) 	/* IO port B clock disable*/
 #define GPIOC_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 4)) 	/* IO port C clock disable*/
-#define GPIOD_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 5))	/* IO port D clock disable*/
+#define GPIOD_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 5))		/* IO port D clock disable*/
 #define GPIOE_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 6)) 	/* IO port E clock disable*/
-#define GPIOF_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 7))	/* IO port F clock disable*/
+#define GPIOF_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 7))		/* IO port F clock disable*/
 #define GPIOG_PCLK_DI()			(RCC->APB2ENR &= ~(1 << 8)) 	/* IO port G clock disable*/
 
 /*
@@ -189,4 +218,16 @@ typedef struct{
 #define USART3_PCLK_DI()		(RCC->APB1ENR &= ~(1 << 18))  /*USART3 clock disable*/
 #define UART4_PCLK_DI()			(RCC->APB1ENR &= ~(1 << 19))  /*UART4 clock disable*/
 #define UART5_PCLK_DI()			(RCC->APB1ENR &= ~(1 << 20))  /*UART5 clock disable*/
+
+/*
+ * Return port code for GPIOx base address
+ */
+#define GPIO_BASEADDR_TO_CODE(x)		((x == GPIOA)? 0 :\
+										 (x == GPIOB)? 1 :\
+										 (x == GPIOC)? 2 :\
+										 (x == GPIOD)? 3 :\
+										 (x == GPIOE)? 4 :\
+										 (x == GPIOF)? 5 :\
+										 (x == GPIOG)? 6 :0)
+
 #endif /* INC_STM32F103XX_H_ */
