@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  00001644  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000007df  00000000  00000000  0000166d  2**0
+ 12 .debug_info   0000082b  00000000  00000000  0000166d  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00000265  00000000  00000000  00001e4c  2**0
+ 13 .debug_abbrev 00000278  00000000  00000000  00001e98  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 000000b8  00000000  00000000  000020b8  2**3
+ 14 .debug_aranges 000000c0  00000000  00000000  00002110  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 0000007e  00000000  00000000  00002170  2**0
+ 15 .debug_rnglists 00000085  00000000  00000000  000021d0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00001306  00000000  00000000  000021ee  2**0
+ 16 .debug_macro  00001373  00000000  00000000  00002255  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00000d99  00000000  00000000  000034f4  2**0
+ 17 .debug_line   00000e62  00000000  00000000  000035c8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00004fb6  00000000  00000000  0000428d  2**0
+ 18 .debug_str    00005200  00000000  00000000  0000442a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00009243  2**0
+ 19 .comment      00000043  00000000  00000000  0000962a  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00000224  00000000  00000000  00009288  2**2
+ 20 .debug_frame  0000024c  00000000  00000000  00009670  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000006f  00000000  00000000  000094ac  2**0
+ 21 .debug_line_str 0000006f  00000000  00000000  000098bc  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -488,10 +488,10 @@ void GPIO_init(GPIO_Handle_t *pGPIOHandle){
 	uint32_t temp = 0;
  80003a0:	2300      	movs	r3, #0
  80003a2:	60fb      	str	r3, [r7, #12]
+	// 1. configure the mode of GPIO Pin
+	// 2. configure the speed
 	// 3. configure pull up pull down settings
-
 	// 4. configure the output type
-
 	// 5. configure the alternate functionality
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_AF_OD_50MHZ){
  80003a4:	687b      	ldr	r3, [r7, #4]
@@ -536,9 +536,9 @@ void GPIO_init(GPIO_Handle_t *pGPIOHandle){
  80003ee:	68fa      	ldr	r2, [r7, #12]
  80003f0:	430a      	orrs	r2, r1
  80003f2:	601a      	str	r2, [r3, #0]
+		uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
+		AFIO->EXTICR[temp1] = portcode << (temp2*4);
 		}
-
-
 
 
 }
@@ -683,7 +683,7 @@ void GPIO_init(GPIO_Handle_t *pGPIOHandle){
  80004f0:	4a27      	ldr	r2, [pc, #156]	@ (8000590 <GPIO_init+0x1f8>)
  80004f2:	430b      	orrs	r3, r1
  80004f4:	6013      	str	r3, [r2, #0]
-		temp1 = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)/4;
+		temp1 = (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)/4; //Logic
  80004f6:	687b      	ldr	r3, [r7, #4]
  80004f8:	791b      	ldrb	r3, [r3, #4]
  80004fa:	089b      	lsrs	r3, r3, #2
