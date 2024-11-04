@@ -19,6 +19,9 @@
 #define GPIO_PIN_SET	SET
 #define GPIO_PIN_RESET	RESET
 
+#define FLAG_SET 		SET
+#define FLAG_RESET		RESET
+
 #define __vo volatile
 // ******************************* START: Processor Specific Details **********************************/
 /*
@@ -44,6 +47,26 @@
 
 #define NVIC_PR_BASEADDR		((__vo uint32_t *)	0xE000E400)
 #define NO_PR_BITS_IMPLEMENTED			4
+
+/*
+ * macros for all possible priority levels
+ */
+#define NVIC_IRQ_PRI0			0
+#define NVIC_IRQ_PRI1			1
+#define NVIC_IRQ_PRI2			2
+#define NVIC_IRQ_PRI3			3
+#define NVIC_IRQ_PRI4			4
+#define NVIC_IRQ_PRI5			5
+#define NVIC_IRQ_PRI6			6
+#define NVIC_IRQ_PRI7			7
+#define NVIC_IRQ_PRI8			8
+#define NVIC_IRQ_PRI9			9
+#define NVIC_IRQ_PRI10			10
+#define NVIC_IRQ_PRI11			11
+#define NVIC_IRQ_PRI12			12
+#define NVIC_IRQ_PRI13			13
+#define NVIC_IRQ_PRI14			14
+#define NVIC_IRQ_PRI15			15
 
 /*
  * Base Addresses of Flash and SRAM memories
@@ -104,6 +127,22 @@ typedef struct{
 }GPIO_RegDef_t;
 
 /*
+ * peripheral register definition for GPIO
+ */
+typedef struct{
+	__vo uint32_t SPI_CR1;		/*SPI control register 1 (not used in I2S mode), Address offset: 0x00 */
+	__vo uint32_t SPI_CR2;		/*SPI control register 2,						 Address offset: 0x04 */
+	__vo uint32_t SPI_SR;		/*SPI status register, 							 Address offset: 0x08 */
+	__vo uint32_t SPI_DR;		/*SPI data register,							 Address offset: 0x0C */
+	__vo uint32_t SPI_CRCPR;	/*SPI CRC polynomial register,					 Address offset: 0x10 */
+	__vo uint32_t SPI_RXCRCR;	/*SPI RX CRC register,							 Address offset: 0x14 */
+	__vo uint32_t SPI_TXCRCR;	/*SPI TX CRC register  (not used in I2S mode), 	 Address offset: 0x18 */
+	__vo uint32_t SPI_I2SCFGR;	/*SPI_I2S configuration register,				 Address offset: 0x1C */
+	__vo uint32_t SPI_I2SPR;	/*SPI_I2S prescaler register, 					 Address offset: 0x20 */
+
+}SPI_RegDef_t;
+
+/*
 * peripheral register definition for AFIO
 */
 
@@ -152,8 +191,8 @@ typedef struct{
 }EXTI_RegDef_t;
 
 /*
-*  peripheral definitions ( Peripheral base addresses typecasted to xxx_RegDef_t)
-*/
+ *  peripheral definitions ( Peripheral base addresses typecasted to xxx_RegDef_t)
+ */
 #define GPIOA		((GPIO_RegDef_t*)GPIOA_BASEADDR)
 #define GPIOB		((GPIO_RegDef_t*)GPIOB_BASEADDR)
 #define GPIOC		((GPIO_RegDef_t*)GPIOC_BASEADDR)
@@ -162,9 +201,14 @@ typedef struct{
 #define GPIOF		((GPIO_RegDef_t*)GPIOF_BASEADDR)
 #define GPIOG		((GPIO_RegDef_t*)GPIOG_BASEADDR)
 
-#define RCC			((RCC_RegDef_t*)RCC_BASEADDR)
+#define RCC			((RCC_RegDef_t*)  RCC_BASEADDR)
 #define EXTI		((EXTI_RegDef_t*)EXTI_BASEADDR)
 #define AFIO		((AFIO_RegDef_t*)AFIO_BASEADDR)
+
+#define SPI1		((SPI_RegDef_t*) SPI1_BASEADDR)
+#define SPI2		((SPI_RegDef_t*) SPI2_BASEADDR)
+#define SPI3		((SPI_RegDef_t*) SPI3_BASEADDR)
+
 /*
  * Reset Macros for GPIOx peripherals
  */
@@ -174,6 +218,12 @@ typedef struct{
 #define GPIOD_REG_RESET()			do{(RCC->APB2RSTR |= (1<<5));	(RCC->APB2RSTR &= ~(1<<5));}while(0)
 #define GPIOE_REG_RESET()			do{(RCC->APB2RSTR |= (1<<6));	(RCC->APB2RSTR &= ~(1<<6));}while(0)
 
+/*
+ * Reset Macros for SPIx peripherals
+ */
+#define SPI1_REG_RESET()			do{(RCC->APB2ENR |= (1 << 12));	(RCC->APB2ENR  &= ~(1 << 12));}while(0)
+#define SPI2_REG_RESET()			do{(RCC->APB1ENR |= (1 << 14));	(RCC->APB1ENR  &= ~(1 << 14));}while(0)
+#define SPI3_REG_RESET()			do{(RCC->APB1ENR |= (1 << 15));	(RCC->APB1ENR  &= ~(1 << 15));}while(0)
 /*
  * Clock Enable Macros for GPIOx peripherals
  */
