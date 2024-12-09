@@ -1,4 +1,4 @@
-"./Src/master_slave_spi.o"
+"./Src/SPI_comnd&Response_Com.o"
 "./Src/syscalls.o"
 "./Src/sysmem.o"
 "./Startup/startup_stm32f103c8tx.o"
