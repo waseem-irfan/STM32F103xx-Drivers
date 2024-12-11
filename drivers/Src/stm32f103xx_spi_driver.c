@@ -217,7 +217,34 @@ void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len){
  */
 
 void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t PinNumber){
-
+	if(EnorDi == ENABLE){
+		if(IRQNumber <= 31){
+			// program ISER0 register
+			*NVIC_ISER0 = (1 << IRQNumber);
+		}
+		else if(IRQNumber > 31 && IRQNumber <64){
+			// program ISER1 register
+			*NVIC_ISER1 = (1 << IRQNumber%32);
+		}
+		else if(IRQNumber >= 64 && IRQNumber <96){
+			// program ISER2 register
+			*NVIC_ISER2 = (1 << IRQNumber%64);
+		}
+	}
+	else{
+		if(IRQNumber <= 31){
+			// program ICER0 register
+			*NVIC_ICER0 = (1 << IRQNumber);
+		}
+		else if(IRQNumber > 31 && IRQNumber <64){
+			// program ICER1 register
+			*NVIC_ICER1 = (1 << IRQNumber%32);
+		}
+		else if(IRQNumber >= 64 && IRQNumber <96){
+			// program ICER2 register
+			*NVIC_ICER2 = (1 << IRQNumber%64);
+		}
+	}
 }
 
 /*********************************************************************
@@ -237,7 +264,11 @@ void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t PinNumber){
 
 
 void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority){
-
+	// 1. First lets find out the ipr register
+	uint8_t iprx = IRQNumber/4;
+	uint8_t iprx_section = IRQNumber%4;
+	uint8_t shift_amount =  (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
+	*(NVIC_PR_BASEADDR + iprx ) |= (IRQPriority << shift_amount);
 }
 
 /*********************************************************************
@@ -352,4 +383,48 @@ void SPI_SSOEConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDi){
 		pSPIx->SPI_CR2 &= ~(1 << SPI_CR2_SSOE);
 	}
 }
+
+uint8_t SPI_SendDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len){
+	/*
+	 * API to Send data with Interrupt Mode
+	 * 1. Save the Tx buffer length and address in some global variable.
+	 * 2. Mark the SPI state as busy in transmission so that no other
+	 * code can take same SPI peripheral until transmission is over.
+	 * 3. Enable TXEIE control bit to get interrupt whenever TXE Flag is set in SR
+	 *
+	 */
+	uint8_t state = pSPIHandle->TxState;
+	if(state != SPI_BUSY_IN_TX){
+		pSPIHandle->pTxBuffer = pTxBuffer;
+		pSPIHandle->TxLen = Len;
+		pSPIHandle->TxState = SPI_BUSY_IN_TX;
+		pSPIHandle->pSPIx->SPI_CR2 |= (1<<SPI_CR2_TXEIE);
+	}
+	return state;
+	//4. Data Transmission will be handled by ISR code. (will implement later)
+
+
+}
+uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t Len){
+	/*
+	 * API to Send data with Interrupt Mode
+	 * 1. Save the Tx buffer length and address in some global variable.
+	 * 2. Mark the SPI state as busy in transmission so that no other
+	 * code can take same SPI peripheral until transmission is over.
+	 * 3. Enable TXEIE control bit to get interrupt whenever TXE Flag is set in SR
+	 *
+	 */
+	uint8_t state = pSPIHandle->RxState;
+	if(state != SPI_BUSY_IN_RX){
+		pSPIHandle->pRxBuffer = pRxBuffer;
+		pSPIHandle->RxLen = Len;
+		pSPIHandle->RxState = SPI_BUSY_IN_RX;
+		pSPIHandle->pSPIx->SPI_CR2 |= (1<<SPI_CR2_RXNEIE);
+	}
+	return state;
+	//4. Data Transmission will be handled by ISR code. (will implement later)
+
+
+}
+
 
