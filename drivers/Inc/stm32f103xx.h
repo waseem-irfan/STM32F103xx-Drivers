@@ -8,6 +8,7 @@
 #ifndef INC_STM32F103XX_H_
 #define INC_STM32F103XX_H_
 
+#include <stddef.h>
 #include <stdint.h>
 // some generic macros
 #define ENABLE	1

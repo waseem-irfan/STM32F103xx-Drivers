@@ -1,6 +1,6 @@
 ../Src/SPI_comnd&Response_Com.c:50:6:delay	16	static
 ../Src/SPI_comnd&Response_Com.c:63:6:SPI_GPIOInit	24	static
-../Src/SPI_comnd&Response_Com.c:78:6:SPI2_Init	24	static
+../Src/SPI_comnd&Response_Com.c:78:6:SPI2_Init	40	static
 ../Src/SPI_comnd&Response_Com.c:92:6:GPIO_ButtonInit	32	static
 ../Src/SPI_comnd&Response_Com.c:107:9:SPI_verifyResponse	16	static
 ../Src/SPI_comnd&Response_Com.c:118:5:main	24	static

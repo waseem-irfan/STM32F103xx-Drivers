@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  0000305c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00001818  00000000  00000000  00003085  2**0
+ 12 .debug_info   00001a39  00000000  00000000  00003085  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 000006d0  00000000  00000000  0000489d  2**0
+ 13 .debug_abbrev 0000072c  00000000  00000000  00004abe  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000220  00000000  00000000  00004f70  2**3
+ 14 .debug_aranges 00000248  00000000  00000000  000051f0  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000182  00000000  00000000  00005190  2**0
+ 15 .debug_rnglists 000001a3  00000000  00000000  00005438  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000034a2  00000000  00000000  00005312  2**0
+ 16 .debug_macro  000034fd  00000000  00000000  000055db  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00002653  00000000  00000000  000087b4  2**0
+ 17 .debug_line   00002870  00000000  00000000  00008ad8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0000b73d  00000000  00000000  0000ae07  2**0
+ 18 .debug_str    0000b82b  00000000  00000000  0000b348  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00016544  2**0
+ 19 .comment      00000043  00000000  00000000  00016b73  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00000e10  00000000  00000000  00016588  2**2
+ 20 .debug_frame  00000ed4  00000000  00000000  00016bb8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000006f  00000000  00000000  00017398  2**0
+ 21 .debug_line_str 0000006f  00000000  00000000  00017a8c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -119,41 +119,41 @@ void delay(void){
 
 void SPI2_Init(void){
  800019c:	b580      	push	{r7, lr}
- 800019e:	b084      	sub	sp, #16
+ 800019e:	b088      	sub	sp, #32
  80001a0:	af00      	add	r7, sp, #0
 	SPI_Handle_t SPI2handle;
 
 	SPI2handle.pSPIx = SPI2;
  80001a2:	4b0c      	ldr	r3, [pc, #48]	@ (80001d4 <SPI2_Init+0x38>)
- 80001a4:	607b      	str	r3, [r7, #4]
+ 80001a4:	603b      	str	r3, [r7, #0]
 	SPI2handle.SPIConfig.SPI_BusConfig = SPI_BUS_CONFIG_FD;
  80001a6:	2301      	movs	r3, #1
- 80001a8:	727b      	strb	r3, [r7, #9]
+ 80001a8:	717b      	strb	r3, [r7, #5]
 	SPI2handle.SPIConfig.SPI_DeviceMode = SPI_DEVICE_MODE_MASTER;
  80001aa:	2301      	movs	r3, #1
- 80001ac:	723b      	strb	r3, [r7, #8]
+ 80001ac:	713b      	strb	r3, [r7, #4]
 	SPI2handle.SPIConfig.SPI_SClkSpeed =SPI_SCLK_SPEED_DIV32;
  80001ae:	2304      	movs	r3, #4
- 80001b0:	72bb      	strb	r3, [r7, #10]
+ 80001b0:	71bb      	strb	r3, [r7, #6]
 	SPI2handle.SPIConfig.SPI_CPOL = SPI_CPOL_LOW;
  80001b2:	2300      	movs	r3, #0
- 80001b4:	733b      	strb	r3, [r7, #12]
+ 80001b4:	723b      	strb	r3, [r7, #8]
 	SPI2handle.SPIConfig.SPI_CPHA = SPI_CPHA_LOW;
  80001b6:	2300      	movs	r3, #0
- 80001b8:	737b      	strb	r3, [r7, #13]
+ 80001b8:	727b      	strb	r3, [r7, #9]
 	SPI2handle.SPIConfig.SPI_SSM = SPI_SSM_DI;
  80001ba:	2300      	movs	r3, #0
- 80001bc:	73bb      	strb	r3, [r7, #14]
+ 80001bc:	72bb      	strb	r3, [r7, #10]
 	SPI2handle.SPIConfig.SPI_DFF = SPI_DFF_8BITS;
  80001be:	2300      	movs	r3, #0
- 80001c0:	72fb      	strb	r3, [r7, #11]
+ 80001c0:	71fb      	strb	r3, [r7, #7]
 	SPI_init(&SPI2handle);
- 80001c2:	1d3b      	adds	r3, r7, #4
+ 80001c2:	463b      	mov	r3, r7
  80001c4:	4618      	mov	r0, r3
  80001c6:	f000 fbeb 	bl	80009a0 <SPI_init>
 }
  80001ca:	bf00      	nop
- 80001cc:	3710      	adds	r7, #16
+ 80001cc:	3720      	adds	r7, #32
  80001ce:	46bd      	mov	sp, r7
  80001d0:	bd80      	pop	{r7, pc}
  80001d2:	bf00      	nop

@@ -139,6 +139,14 @@ typedef struct{
 #define SPI_BUSY_IN_RX		1
 #define SPI_BUSY_IN_TX		2
 
+/*
+ * possible SPI Application Events
+ */
+#define SPI_EVENT_TX_CMPLT	1
+#define SPI_EVENT_RX_CMPLT	2
+#define SPI_EVENT_OVR_ERR	3
+#define SPI_EVENT_CRC_ERR	4
+
 /******************************************************************************************
  *								APIs supported by this driver
  *		 For more information about the APIs check the function definitions
@@ -167,7 +175,7 @@ uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t
 /*
  * IRQ Configuration and ISR Handling
  */
-void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t PinNumber);
+void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t PinNumber, uint8_t EnorDi);
 void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 void SPI_IRQHandler(SPI_Handle_t *pHandle);
 
